@@ -10,12 +10,14 @@ float time=0;//variable to store the value of time//
 int dry=13;//output pin for dryer motor //
 int set_time,zero,rem_time,time2;//variable to store the some important value// 
 float current_time;// variable to store the current time when entering in the function//
+int buzer=A0;
 //_________________________________________________//
 void setup()
 {
   pinMode(dry,OUTPUT);
   pinMode(set,INPUT_PULLUP);
   pinMode(motor,OUTPUT);
+  pinMode(buzer,OUTPUT);
   pinMode(button_wash,INPUT_PULLUP);
   pinMode(button_dry,INPUT_PULLUP);
   pinMode(set_zero,INPUT_PULLUP);
@@ -49,11 +51,23 @@ void loop()
      lcd.clear();
      lcd.setCursor(0,0);
      lcd.print("Set timer:");
+     lcd.setCursor(11,0);
+     lcd.print(time);
+    digitalWrite(buzer,1);
+    delay(500);
+    digitalWrite(buzer,0);
+    delay(40);
      }
      else{
      lcd.clear();
      lcd.setCursor(0, 0);
-     lcd.print("timer set");
+     lcd.print("timer set:");
+     lcd.setCursor(11,0);
+     lcd.print(time);
+    digitalWrite(buzer,1);
+    delay(150);
+    digitalWrite(buzer,0);
+    delay(10);
      
      }
    }
@@ -87,10 +101,16 @@ void loop()
     }
     delay(300);
     digitalWrite(motor,0);
+    while(digitalRead(12)!=0){
+      digitalWrite(buzer,1);
+      delay(40);
+      digitalWrite(buzer,0);
+      delay(40);
+      lcd.clear();
+      lcd.print("Washing stop");
+    }
     rem_time=1;
     time=0;
-    lcd.clear();
-    lcd.print("Washing stop");
    }
    else{
      digitalWrite(motor,0);
@@ -134,8 +154,15 @@ void loop()
     rem_time=1;
     time=0; 
     digitalWrite(dry,0);
-    lcd.clear();
-    lcd.print("Drying stop");     
+     while(digitalRead(12)!=0){
+      digitalWrite(buzer,1);
+      delay(40);
+      digitalWrite(buzer,0);
+      delay(40);
+      lcd.clear();
+      lcd.print("Drying stop"); 
+    }
+      
    }
   else{
      digitalWrite(dry,0);
@@ -153,6 +180,9 @@ void loop()
    while(set_time==0){
     time=time+1;
     lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Set timer:");
+    lcd.setCursor(11,0);
     lcd.print(time);
     set_time=digitalRead(12);
     delay(1000);
